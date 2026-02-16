@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'apps.bot',
+    'apps.user',
 ]
 
 MIDDLEWARE = [

@@ -1,26 +1,16 @@
 import os
 
 from telegram.ext import ApplicationBuilder, CommandHandler
-from telegram.request import HTTPXRequest
+
+from apps.bot.models import TelegramUser
+
+NAME, PHONE_NUMBER = range(2)
 
 
 class TelegramBot:
 
     def __init__(self):
         TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-
-        # Timeout sozlamalari
-        request = HTTPXRequest(
-            connect_timeout=30.0,
-            read_timeout=30.0,
-            write_timeout=30.0,
-            pool_timeout=30.0,
-        )
-
-        self.app = ApplicationBuilder() \
-            .token(TELEGRAM_BOT_TOKEN) \
-            .request(request) \
-            .build()
 
         self.app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
         self.app.add_handler(CommandHandler("start", self.start))
@@ -30,5 +20,9 @@ class TelegramBot:
 
     async def start(self, update, context):
         user = update.effective_user
+        bot_user = TelegramUser.objects.filter(chat_id=user.id).first()
 
-        await update.message.reply_text(f"Salom {user.full_name}")
+        if not bot_user:
+            await update.message.reply_text(
+                text="Ism Familiyangizni kiriting."
+            )
