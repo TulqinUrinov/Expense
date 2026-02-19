@@ -8,7 +8,14 @@ if TYPE_CHECKING:
 
 
 class TelegramUser(BaseModel):
+    class States(models.TextChoices):
+        START = "START", "Start"
+        NAME = "NAME", "Name"
+        PHONE = "PHONE", "Phone"
+        DONE = "DONE", "Done"
+
     chat_id = models.BigIntegerField(unique=True)
+
     username = models.CharField(
         max_length=100,
         null=True,
@@ -21,6 +28,12 @@ class TelegramUser(BaseModel):
     )
 
     name = models.CharField(max_length=100, null=True, blank=True)
+
+    state = models.CharField(
+        max_length=20,
+        choices=States.choices,
+        default=States.START
+    )
 
     def __str__(self):
         return self.name

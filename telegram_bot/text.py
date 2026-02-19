@@ -1,0 +1,5 @@
+start = "/start buyrug'ini kiriting."
+name = "Ism familiyangizni kiriting:"
+phone_number = "Telefon raqamingizni pastdagi tugma orqali yuboring:"
+contact = "Raqam ulashish"
+warning_phone = "Pastdagi tugma orqali raqamingizni yuboring"
