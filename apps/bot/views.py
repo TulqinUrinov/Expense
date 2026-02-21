@@ -16,7 +16,7 @@ class JWTTokenGenerator(generics.GenericAPIView):
     serializer_class = InitDataSerializer
     permission_classes = []
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
