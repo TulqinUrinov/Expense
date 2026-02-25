@@ -38,6 +38,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("token/", include("apps.bot.urls")),
+    path("user/", include("apps.user.urls")),
 
     # Swagger
     re_path(

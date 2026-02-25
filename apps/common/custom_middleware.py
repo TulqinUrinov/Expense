@@ -9,7 +9,7 @@ from apps.user.models import User
 class TelegramUserJWTMiddleware:
 
     def __init__(self, get_response):
-        self.get_repsonse = get_response
+        self.get_response = get_response
 
     def __call__(self, request):
         auth_header = request.headers.get('Authorization')
@@ -40,4 +40,4 @@ class TelegramUserJWTMiddleware:
             except jwt.DecodeError:
                 return JsonResponse({"error": "Invalid token"}, status=401)
 
-        return self.get_repsonse(request)
+        return self.get_response(request)

@@ -36,4 +36,4 @@ class TelegramUser(BaseModel):
     )
 
     def __str__(self):
-        return self.name
+        return self.name or str(self.chat_id)

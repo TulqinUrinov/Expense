@@ -25,17 +25,15 @@ class TelegramBot:
         bot_user = TelegramUser.objects.filter(chat_id=tg_user.id).first()
 
         if not bot_user:
-            user, _= User.objects.get_or_create()
-
-            created = TelegramUser.objects.create(
+            user = User.objects.create()
+            TelegramUser.objects.create(
                 chat_id=tg_user.id,
                 username=tg_user.username,
                 name=tg_user.full_name,
                 user=user,
-                state=TelegramUser.States.NAME
+                state=TelegramUser.States.NAME,
             )
-            if created:
-                await update.message.reply_text(text=name)
+            await update.message.reply_text(text=name)
         else:
             await update.message.reply_text("Salom")
 
@@ -87,6 +85,7 @@ class TelegramBot:
             bot_user.state = TelegramUser.States.DONE
             bot_user.save()
 
+            await update.message.reply_text("Raqamingiz saqlandi. Salom!")
             return
 
         if bot_user.state == TelegramUser.States.DONE:

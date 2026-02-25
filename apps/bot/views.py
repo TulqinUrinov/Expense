@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import InitDataSerializer
 from .models import TelegramUser
 from .utils import verify_telegram_data
+from apps.common.custom_permission import IsAuthenticatedUser
 
 
 class JWTTokenGenerator(generics.GenericAPIView):
@@ -23,7 +24,7 @@ class JWTTokenGenerator(generics.GenericAPIView):
 
         is_valid, data = verify_telegram_data(
             init_data,
-            os.environ.get("TELEGRAM_BOT_TOKEN")
+            os.environ.get("TELEGRAM_BOT_TOKEN"),
         )
 
         if not is_valid:
@@ -32,9 +33,11 @@ class JWTTokenGenerator(generics.GenericAPIView):
         telegram_user = json.loads(data["user"])
         chat_id = telegram_user["id"]
 
-        bot_user = TelegramUser.objects.select_related("user").filter(
-            chat_id=chat_id
-        ).first()
+        bot_user = (
+            TelegramUser.objects.select_related("user")
+            .filter(chat_id=chat_id)
+            .first()
+        )
 
         if not bot_user:
             raise ValidationError("Telegram user not registered")
@@ -43,7 +46,29 @@ class JWTTokenGenerator(generics.GenericAPIView):
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-        })
+        return Response(
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            }
+        )
+
+
+class RefreshTokenGenerator(generics.GenericAPIView):
+    permission_classes = [IsAuthenticatedUser]
+
+    def post(self, request):
+        user = getattr(request, "user", None)
+
+        if user is None:
+            raise ValidationError("User not found in request")
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            }
+        )
+
